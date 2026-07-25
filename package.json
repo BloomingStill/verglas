@@ -1,0 +1,14 @@
+{
+  "name": "verglas",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "new": "node tools/new-resident.mjs",
+    "validate": "node tools/validate.mjs",
+    "directory": "node tools/generate-directory.mjs",
+    "check:pr": "node tools/check-pr-scope.mjs"
+  }
+}

@@ -1,0 +1,35 @@
+name: validate Verglas resident change
+
+on:
+  pull_request:
+    paths:
+      - 'residents/**'
+      - 'tools/**'
+      - '.github/workflows/validate.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Validate repository data
+        run: node tools/validate.mjs
+
+      - name: Check pull-request ownership and scope
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node tools/check-pr-scope.mjs
