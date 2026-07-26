@@ -24,6 +24,9 @@ jobs:
         with:
           node-version: 24
 
+      - name: Run tool smoke tests
+        run: npm test
+
       - name: Validate repository data
         run: node tools/validate.mjs
 

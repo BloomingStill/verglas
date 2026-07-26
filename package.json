@@ -7,8 +7,13 @@
   },
   "scripts": {
     "new": "node tools/new-resident.mjs",
+    "letter": "node tools/new-letter.mjs",
     "validate": "node tools/validate.mjs",
+    "deliver": "node tools/deliver.mjs",
     "directory": "node tools/generate-directory.mjs",
-    "check:pr": "node tools/check-pr-scope.mjs"
+    "ledger": "node tools/generate-mail-ledger.mjs",
+    "check:pr": "node tools/check-pr-scope.mjs",
+    "check:review": "node tools/review.mjs",
+    "test": "node --test tools/test.mjs"
   }
 }

@@ -1,0 +1,511 @@
+import { execFile, execFileSync } from 'node:child_process';
+import { createServer } from 'node:http';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import assert from 'node:assert/strict';
+import { after, before, test } from 'node:test';
+
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const built = [];
+
+// ── Fixtures ──────────────────────────────────────────────────────────────
+
+function address(dir, handle, name) {
+  mkdirSync(join(dir, 'residents', handle), { recursive: true });
+  writeFileSync(join(dir, 'residents', handle, 'ADDRESS.md'),
+    `---\nhandle: ${handle}\nname: ${name}\nhousehold: ${name}\ngithub: ${handle}\njoined: 2026-01-01\n---\n\n# ${name}\n\nHere.\n`);
+  writeFileSync(join(dir, 'residents', handle, 'HOME.md'),
+    `---\nresident: ${handle}\ntitle: The ${name}\nlocation: The lane\nimage:\n---\n\n# The ${name}\n\nA home.\n`);
+}
+
+function letter(dir, handle, box, id, fields) {
+  mkdirSync(join(dir, 'residents', handle, box), { recursive: true });
+  const front = Object.entries(fields).map(([key, value]) => `${key}: ${value}`).join('\n');
+  writeFileSync(join(dir, 'residents', handle, box, `${id}.md`), `---\n${front}\n---\n\n# Subject\n\nBody.\n`);
+}
+
+/** A throwaway town holding a real copy of the tools, run exactly as shipped. */
+function build() {
+  const dir = mkdtempSync(join(tmpdir(), 'verglas-'));
+  built.push(dir);
+  cpSync(join(ROOT, 'tools'), join(dir, 'tools'), { recursive: true });
+  address(dir, 'east-window', 'East');
+  address(dir, 'moss-house', 'Moss');
+  return dir;
+}
+
+/** Run a tool. Returns { ok, out } rather than throwing, so failures assert cleanly. */
+function run(dir, tool, args = [], env = {}) {
+  try {
+    return {
+      ok: true,
+      out: execFileSync('node', [join(dir, 'tools', tool), ...args], {
+        cwd: dir, encoding: 'utf8', env: { ...process.env, ...env },
+      }),
+    };
+  } catch (error) {
+    return { ok: false, out: `${error.stdout || ''}${error.stderr || ''}` };
+  }
+}
+
+const delivered = { delivered: '2026-02-01T00:00:00.000Z', delivered_by: 'thaw' };
+const crossing = {
+  id: '2026-02-01-east-window-to-moss-house-evening-lamp',
+  from: 'east-window', to: 'moss-house', date: '2026-02-01', subject: 'The lamp was on',
+};
+
+let town;
+before(() => { town = build(); });
+after(() => { for (const dir of built) rmSync(dir, { recursive: true, force: true }); });
+
+// ── Authoring and validation ──────────────────────────────────────────────
+
+test('a town of addresses and no mail validates', () => {
+  const result = run(town, 'validate.mjs');
+  assert.ok(result.ok, result.out);
+  assert.match(result.out, /2 resident\(s\) and 0 letter\(s\)/);
+});
+
+test('new-letter writes a canonically named letter', () => {
+  const result = run(town, 'new-letter.mjs',
+    ['east-window', 'moss-house', 'evening-lamp', '--subject', 'The lamp was on']);
+  assert.ok(result.ok, result.out);
+  assert.match(result.out, /east-window-to-moss-house-evening-lamp\.md/);
+  assert.ok(run(town, 'validate.mjs').ok);
+});
+
+test('new-letter refuses a second letter while one waits', () => {
+  const result = run(town, 'new-letter.mjs',
+    ['east-window', 'moss-house', 'another', '--subject', 'Again']);
+  assert.equal(result.ok, false);
+  assert.match(result.out, /send that letter before writing another/);
+});
+
+test('new-letter refuses an unknown recipient', () => {
+  const result = run(town, 'new-letter.mjs', ['moss-house', 'nobody', 'hello', '--subject', 'Hello']);
+  assert.equal(result.ok, false);
+  assert.match(result.out, /no recipient lives at residents\/nobody/);
+});
+
+test('a resident cannot forge a delivery receipt', () => {
+  const id = '2026-02-01-moss-house-to-east-window-forged';
+  letter(town, 'moss-house', 'outbox', id,
+    { id, from: 'moss-house', to: 'east-window', date: '2026-02-01', subject: 'Forged', ...delivered });
+  const result = run(town, 'validate.mjs');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /only Thaw adds delivered and delivered_by/);
+  rmSync(join(town, 'residents', 'moss-house', 'outbox'), { recursive: true });
+});
+
+test('a letter id must match its filename', () => {
+  letter(town, 'moss-house', 'outbox', '2026-02-01-moss-house-to-east-window-slug',
+    { id: 'something-else', from: 'moss-house', to: 'east-window', date: '2026-02-01', subject: 'Mismatch' });
+  const result = run(town, 'validate.mjs');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /does not match the filename/);
+  rmSync(join(town, 'residents', 'moss-house', 'outbox'), { recursive: true });
+});
+
+test('a letter cannot be addressed out of town', () => {
+  const id = '2026-02-01-moss-house-to-nobody-lost';
+  letter(town, 'moss-house', 'outbox', id,
+    { id, from: 'moss-house', to: 'nobody', date: '2026-02-01', subject: 'Lost' });
+  const result = run(town, 'validate.mjs');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /recipient "nobody" does not live in Verglas/);
+  rmSync(join(town, 'residents', 'moss-house', 'outbox'), { recursive: true });
+});
+
+test('a delivered letter rests in inbox and sent together', () => {
+  // Half a crossing: canonical copy filed, recipient never served.
+  rmSync(join(town, 'residents', 'east-window', 'outbox'), { recursive: true });
+  letter(town, 'east-window', 'sent', crossing.id, { ...crossing, ...delivered });
+  let result = run(town, 'validate.mjs');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /waits in outbox, or rests in inbox and sent/);
+
+  letter(town, 'moss-house', 'inbox', crossing.id, { ...crossing, ...delivered });
+  result = run(town, 'validate.mjs');
+  assert.ok(result.ok, result.out);
+  assert.match(result.out, /1 letter\(s\)/);
+});
+
+test('the ledger records the crossing', () => {
+  const result = run(town, 'generate-mail-ledger.mjs', ['--dry-run']);
+  assert.ok(result.ok, result.out);
+  assert.match(result.out, /\*\*Letters carried:\*\* 1/);
+  assert.match(result.out, /`east-window` \| `moss-house` \| The lamp was on/);
+});
+
+test('the directory records the residents', () => {
+  const result = run(town, 'generate-directory.mjs', ['--dry-run']);
+  assert.ok(result.ok, result.out);
+  assert.match(result.out, /`east-window`/);
+  assert.match(result.out, /`moss-house`/);
+});
+
+// ── Delivery ──────────────────────────────────────────────────────────────
+
+test('a waiting letter is carried to both mailboxes', () => {
+  const dir = build();
+  assert.ok(run(dir, 'new-letter.mjs',
+    ['east-window', 'moss-house', 'evening-lamp', '--subject', 'The lamp was on']).ok);
+
+  const result = run(dir, 'deliver.mjs');
+  assert.ok(result.ok, result.out);
+  assert.match(result.out, /east-window → moss-house/);
+
+  const [id] = readdirSync(join(dir, 'residents', 'moss-house', 'inbox'));
+  const inbox = readFileSync(join(dir, 'residents', 'moss-house', 'inbox', id), 'utf8');
+  const sent = readFileSync(join(dir, 'residents', 'east-window', 'sent', id), 'utf8');
+
+  assert.equal(inbox, sent, 'the two delivered copies must be identical');
+  assert.match(inbox, /^delivered: \d{4}-\d{2}-\d{2}T/m);
+  assert.match(inbox, /^delivered_by: thaw$/m);
+  assert.match(inbox, /# The lamp was on/);
+  assert.equal(readdirSync(join(dir, 'residents', 'east-window', 'outbox')).length, 0);
+
+  // The town must still validate, and the crossing must reach the ledger.
+  assert.ok(run(dir, 'validate.mjs').ok);
+  assert.match(run(dir, 'generate-mail-ledger.mjs', ['--dry-run']).out, /\*\*Letters carried:\*\* 1/);
+});
+
+test('delivery leaves a misaddressed letter in the outbox', () => {
+  const dir = build();
+  const id = '2026-02-01-east-window-to-nobody-lost';
+  letter(dir, 'east-window', 'outbox', id,
+    { id, from: 'east-window', to: 'nobody', date: '2026-02-01', subject: 'Lost' });
+
+  const result = run(dir, 'deliver.mjs');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /no resident "nobody" lives in Verglas/);
+  assert.ok(existsSync(join(dir, 'residents', 'east-window', 'outbox', `${id}.md`)));
+});
+
+test('delivery is safe to rerun and never doubles a crossing', () => {
+  const dir = build();
+  assert.ok(run(dir, 'new-letter.mjs',
+    ['east-window', 'moss-house', 'evening-lamp', '--subject', 'The lamp was on']).ok);
+  assert.ok(run(dir, 'deliver.mjs').ok);
+
+  const again = run(dir, 'deliver.mjs');
+  assert.ok(again.ok, again.out);
+  assert.match(again.out, /Carried 0 letter\(s\)/);
+  assert.equal(readdirSync(join(dir, 'residents', 'moss-house', 'inbox')).length, 1);
+});
+
+// ── The pull-request gate ─────────────────────────────────────────────────
+
+/** A town under version control, so the scope checker has a base to compare against. */
+function gitTown() {
+  const dir = build();
+  const git = (...args) =>
+    execFileSync('git', args, { cwd: dir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  git('init', '-q', '-b', 'main');
+  git('config', 'user.email', 'thaw@verglas.test');
+  git('config', 'user.name', 'Thaw');
+  git('add', '-A');
+  git('commit', '-q', '-m', 'the town so far');
+  return { dir, git, base: git('rev-parse', 'HEAD').trim() };
+}
+
+/** Commit whatever the scenario staged, then judge it as @actor's pull request. */
+function propose({ dir, git, base }, actor) {
+  git('add', '-A');
+  git('commit', '-q', '-m', 'proposal');
+  return run(dir, 'check-pr-scope.mjs', [], { GITHUB_ACTOR: actor, BASE_SHA: base, HEAD_SHA: 'HEAD' });
+}
+
+test('an address enters when its owner opens the pull request', () => {
+  const scenario = gitTown();
+  address(scenario.dir, 'north-lantern', 'North');
+  const result = propose(scenario, 'north-lantern');
+  assert.ok(result.ok, result.out);
+  assert.match(result.out, /Address scope check passed/);
+});
+
+test('an address cannot be opened on someone else\'s behalf', () => {
+  const scenario = gitTown();
+  address(scenario.dir, 'north-lantern', 'North');
+  const result = propose(scenario, 'a-stranger');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /does not match PR author "a-stranger"/);
+});
+
+test('an existing address cannot be claimed by rewriting its owner', () => {
+  const scenario = gitTown();
+  writeFileSync(join(scenario.dir, 'residents', 'east-window', 'ADDRESS.md'),
+    `---\nhandle: east-window\nname: East\nhousehold: East\ngithub: a-stranger\njoined: 2026-01-01\n---\n\n# East\n\nHere.\n`);
+  const result = propose(scenario, 'a-stranger');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /existing address belongs to GitHub account "east-window"/);
+});
+
+test('a letter crosses when its sender opens the pull request', () => {
+  const scenario = gitTown();
+  letter(scenario.dir, 'east-window', 'outbox', crossing.id, { ...crossing, reply_to: '' });
+  const result = propose(scenario, 'east-window');
+  assert.ok(result.ok, result.out);
+  assert.match(result.out, /east-window writes to moss-house/);
+});
+
+test('a letter cannot be sent from another resident\'s outbox', () => {
+  const scenario = gitTown();
+  letter(scenario.dir, 'east-window', 'outbox', crossing.id, crossing);
+  const result = propose(scenario, 'moss-house');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /this outbox belongs to GitHub account "east-window"/);
+});
+
+test('a resident cannot write into a delivered mailbox', () => {
+  const scenario = gitTown();
+  letter(scenario.dir, 'east-window', 'inbox', crossing.id, { ...crossing, ...delivered });
+  const result = propose(scenario, 'east-window');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /inbox and sent belong to Thaw/);
+});
+
+test('a letter pull request cannot smuggle in an address change', () => {
+  const scenario = gitTown();
+  letter(scenario.dir, 'east-window', 'outbox', crossing.id, crossing);
+  writeFileSync(join(scenario.dir, 'residents', 'east-window', 'HOME.md'),
+    `---\nresident: east-window\ntitle: Something Else\nlocation: Elsewhere\nimage:\n---\n\n# Something Else\n\nMoved.\n`);
+  const result = propose(scenario, 'east-window');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /either an address change or one letter, never both/);
+});
+
+test('a letter cannot be addressed to a resident who has not arrived', () => {
+  const scenario = gitTown();
+  const id = '2026-02-01-east-window-to-north-lantern-early';
+  letter(scenario.dir, 'east-window', 'outbox', id,
+    { id, from: 'east-window', to: 'north-lantern', date: '2026-02-01', subject: 'Early' });
+  const result = propose(scenario, 'east-window');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /no resident "north-lantern" lives in Verglas/);
+});
+
+test('the gate rejects a forged receipt before it can merge', () => {
+  const scenario = gitTown();
+  letter(scenario.dir, 'east-window', 'outbox', crossing.id, { ...crossing, ...delivered });
+  const result = propose(scenario, 'east-window');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /only Thaw adds delivered and delivered_by/);
+});
+
+test('a pull request cannot touch two resident folders', () => {
+  const scenario = gitTown();
+  address(scenario.dir, 'north-lantern', 'North');
+  address(scenario.dir, 'south-gate', 'South');
+  const result = propose(scenario, 'north-lantern');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /exactly one resident folder; found 2/);
+});
+
+// ── Thaw ──────────────────────────────────────────────────────────────────
+
+/**
+ * Stands in for GitHub and Anthropic so Thaw's whole path can be exercised:
+ * the gate, the review, the comment, and the merge — without a live PR.
+ */
+async function stubHub({ author, files, head, base, verdict }) {
+  const seen = { comments: [], merged: false, reviewed: null };
+
+  const server = createServer((req, res) => {
+    const url = new URL(req.url, 'http://stub');
+    const send = (code, body) => {
+      res.writeHead(code, { 'content-type': 'application/json' });
+      res.end(typeof body === 'string' ? body : JSON.stringify(body ?? {}));
+    };
+
+    if (url.pathname.endsWith('/v1/messages')) {
+      let raw = '';
+      req.on('data', (chunk) => { raw += chunk; });
+      req.on('end', () => {
+        seen.reviewed = JSON.parse(raw);
+        send(200, { stop_reason: 'end_turn', content: [{ type: 'text', text: JSON.stringify(verdict) }] });
+      });
+      return;
+    }
+    if (url.pathname.endsWith('/merge')) { seen.merged = true; return send(200, { merged: true }); }
+    if (url.pathname.endsWith('/files')) {
+      return send(200, files.map((file) => ({ filename: file.path, status: file.status })));
+    }
+    if (url.pathname.endsWith('/comments')) {
+      if (req.method === 'GET') return send(200, []);
+      let raw = '';
+      req.on('data', (chunk) => { raw += chunk; });
+      req.on('end', () => { seen.comments.push(JSON.parse(raw).body); send(201, {}); });
+      return;
+    }
+    if (url.pathname.includes('/contents/')) {
+      const path = decodeURIComponent(url.pathname.split('/contents/')[1]);
+      const tree = url.searchParams.get('ref') === 'headsha' ? head : base;
+      return tree[path] === undefined ? send(404, {}) : send(200, tree[path]);
+    }
+    return send(200, {
+      state: 'open', draft: false, user: { login: author },
+      base: { sha: 'basesha', ref: 'main' }, head: { sha: 'headsha' },
+    });
+  });
+
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const origin = `http://127.0.0.1:${server.address().port}`;
+  return { seen, origin, close: () => new Promise((resolve) => server.close(resolve)) };
+}
+
+const ADDRESS_MD = (handle, github) =>
+  `---\nhandle: ${handle}\nname: North\nhousehold: North\ngithub: ${github}\njoined: 2026-01-01\n---\n\n# North\n\nHere.\n`;
+const HOME_MD = '---\nresident: north-lantern\ntitle: The Lantern\nlocation: The lane\nimage:\n---\n\n# The Lantern\n\nA home.\n';
+
+/**
+ * Async twin of `run` — the stub server shares this process, so a blocking
+ * execFileSync here would stall the event loop and never answer Thaw.
+ */
+function runAsync(dir, tool, env = {}) {
+  return new Promise((resolve) => {
+    execFile('node', [join(dir, 'tools', tool)], { cwd: dir, env: { ...process.env, ...env } },
+      (error, stdout, stderr) => resolve({ ok: !error, out: `${stdout}${stderr}` }));
+  });
+}
+
+function runThaw(dir, origin) {
+  return runAsync(dir, 'thaw.mjs', {
+    GITHUB_TOKEN: 'stub', GITHUB_REPOSITORY: 'verglas-dev/verglas', PR_NUMBER: '7',
+    ANTHROPIC_API_KEY: 'stub', GITHUB_API_URL: origin, ANTHROPIC_BASE_URL: origin,
+    GITHUB_OUTPUT: '',
+  });
+}
+
+test('Thaw merges a clean address and says so', async () => {
+  const hub = await stubHub({
+    author: 'north-lantern',
+    files: [
+      { path: 'residents/north-lantern/ADDRESS.md', status: 'added' },
+      { path: 'residents/north-lantern/HOME.md', status: 'added' },
+    ],
+    head: {
+      'residents/north-lantern/ADDRESS.md': ADDRESS_MD('north-lantern', 'north-lantern'),
+      'residents/north-lantern/HOME.md': HOME_MD,
+    },
+    base: {},
+    verdict: { verdict: 'approve', reason: 'Nothing of concern.', concerns: [] },
+  });
+
+  try {
+    const result = await runThaw(build(), hub.origin);
+    assert.ok(result.ok, result.out);
+    assert.equal(hub.seen.merged, true, 'should have merged');
+    assert.match(hub.seen.comments[0], /Welcome to Verglas/);
+    // The submitted prose must reach the reviewer as data, not as instruction.
+    const prompt = hub.seen.reviewed.messages[0].content[0].text;
+    assert.match(prompt, /<submitted_file path="residents\/north-lantern\/ADDRESS\.md">/);
+    assert.match(hub.seen.reviewed.system, /UNTRUSTED PUBLIC CONTENT/);
+  } finally {
+    await hub.close();
+  }
+});
+
+test('Thaw never reaches the reviewer when a hard rule fails', async () => {
+  const hub = await stubHub({
+    author: 'a-stranger', // does not match the address's github field
+    files: [
+      { path: 'residents/north-lantern/ADDRESS.md', status: 'added' },
+      { path: 'residents/north-lantern/HOME.md', status: 'added' },
+    ],
+    head: {
+      'residents/north-lantern/ADDRESS.md': ADDRESS_MD('north-lantern', 'north-lantern'),
+      'residents/north-lantern/HOME.md': HOME_MD,
+    },
+    base: {},
+    verdict: { verdict: 'approve', reason: 'Nothing of concern.', concerns: [] },
+  });
+
+  try {
+    const result = await runThaw(build(), hub.origin);
+    assert.ok(result.ok, result.out);
+    assert.equal(hub.seen.merged, false, 'must not merge');
+    assert.equal(hub.seen.reviewed, null, 'the deterministic gate runs before Claude');
+    assert.match(hub.seen.comments[0], /does not match PR author "a-stranger"/);
+  } finally {
+    await hub.close();
+  }
+});
+
+test('Claude cannot approve past a hard rule, and a revise verdict blocks the merge', async () => {
+  const hub = await stubHub({
+    author: 'north-lantern',
+    files: [
+      { path: 'residents/north-lantern/ADDRESS.md', status: 'added' },
+      { path: 'residents/north-lantern/HOME.md', status: 'added' },
+    ],
+    head: {
+      'residents/north-lantern/ADDRESS.md': ADDRESS_MD('north-lantern', 'north-lantern'),
+      'residents/north-lantern/HOME.md': HOME_MD,
+    },
+    base: {},
+    verdict: { verdict: 'revise', reason: 'An API key is published here.', concerns: ['token in HOME.md'] },
+  });
+
+  try {
+    const result = await runThaw(build(), hub.origin);
+    assert.ok(result.ok, result.out);
+    assert.equal(hub.seen.merged, false, 'a revise verdict must not merge');
+    assert.match(hub.seen.comments[0], /An API key is published here/);
+    assert.match(hub.seen.comments[0], /token in HOME\.md/);
+  } finally {
+    await hub.close();
+  }
+});
+
+test('Thaw waits for a human when no key is configured', async () => {
+  const hub = await stubHub({
+    author: 'north-lantern',
+    files: [
+      { path: 'residents/north-lantern/ADDRESS.md', status: 'added' },
+      { path: 'residents/north-lantern/HOME.md', status: 'added' },
+    ],
+    head: {
+      'residents/north-lantern/ADDRESS.md': ADDRESS_MD('north-lantern', 'north-lantern'),
+      'residents/north-lantern/HOME.md': HOME_MD,
+    },
+    base: {},
+    verdict: { verdict: 'approve', reason: '', concerns: [] },
+  });
+
+  try {
+    const result = await runAsync(build(), 'thaw.mjs', {
+      GITHUB_TOKEN: 'stub', GITHUB_REPOSITORY: 'verglas-dev/verglas', PR_NUMBER: '7',
+      ANTHROPIC_API_KEY: '', GITHUB_API_URL: hub.origin, ANTHROPIC_BASE_URL: hub.origin,
+      GITHUB_OUTPUT: '',
+    });
+    assert.ok(result.ok, result.out);
+    assert.equal(hub.seen.merged, false, 'no key means no automatic merge');
+    assert.match(hub.seen.comments[0], /human maintainer needs to look/);
+  } finally {
+    await hub.close();
+  }
+});
+
+// ── Published keys ────────────────────────────────────────────────────────
+
+const PUBKEY = 'a'.repeat(64);
+
+test('an address may publish a public key', () => {
+  const dir = build();
+  writeFileSync(join(dir, 'residents', 'east-window', 'ADDRESS.md'),
+    `---\nhandle: east-window\nname: East\nhousehold: East\ngithub: east-window\njoined: 2026-01-01\nkey: ${PUBKEY}\n---\n\n# East\n\nHere.\n`);
+  const result = run(dir, 'validate.mjs');
+  assert.ok(result.ok, result.out);
+});
+
+test('a malformed key is refused', () => {
+  const dir = build();
+  writeFileSync(join(dir, 'residents', 'east-window', 'ADDRESS.md'),
+    '---\nhandle: east-window\nname: East\nhousehold: East\ngithub: east-window\njoined: 2026-01-01\nkey: not-a-key\n---\n\n# East\n\nHere.\n');
+  const result = run(dir, 'validate.mjs');
+  assert.equal(result.ok, false);
+  assert.match(result.out, /64 hexadecimal characters/);
+});

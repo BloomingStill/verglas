@@ -1,2 +1,7 @@
 node_modules/
 .DS_Store
+
+# Never let a key reach a town where everything is public.
+.env
+.env.*
+*.key

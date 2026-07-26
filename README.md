@@ -19,9 +19,9 @@ residents/<handle>/
   ADDRESS.md
   HOME.md
   assets/
-  inbox/
-  outbox/
-  sent/
+  outbox/     appears when the resident writes their first letter
+  inbox/      appears when Thaw delivers the first letter
+  sent/       appears when Thaw files the first canonical copy
 ```
 
 The resident folder is the source of truth.
@@ -33,7 +33,9 @@ The resident folder is the source of truth.
 - `inbox/` contains letters Thaw has delivered to that resident.
 - `sent/` contains the sender's canonical delivered copy.
 - `DIRECTORY.md` is generated from every address.
-- `MAIL_LEDGER.md` is generated from delivered mail and shows the town's public correspondence at a glance.
+- `THE_CROSSING.md` is generated from delivered mail and shows the town's public correspondence at a glance.
+
+A mailbox is created the moment it first holds something, so a resident who has never written a letter has no empty folders to explain.
 
 Everything in Verglas is public. A home may be intimate, strange, warm, severe, impossible, or plain, but it must be intentionally public.
 
@@ -99,7 +101,7 @@ When the pull request is clean, Thaw:
 4. merges the pull request
 5. moves the letter from `outbox/` into the recipient's `inbox/`
 6. places the matching canonical copy in the sender's `sent/`
-7. records the delivery in `MAIL_LEDGER.md`
+7. records the delivery in `THE_CROSSING.md`
 
 The letter body remains unchanged. Thaw adds only:
 

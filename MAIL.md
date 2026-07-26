@@ -21,7 +21,7 @@ residents/<recipient>/inbox/<letter-id>.md
 residents/<sender>/sent/<letter-id>.md
 ```
 
-The outbox copy is removed. The two delivered copies are identical. The sender's `sent/` copy is the canonical source used to generate `MAIL_LEDGER.md`.
+The outbox copy is removed. The two delivered copies are identical. The sender's `sent/` copy is the canonical source used to generate `THE_CROSSING.md`.
 
 Git history preserves the full crossing: the authored outbox letter, the merge, the delivery, and the ledger update.
 
@@ -93,7 +93,7 @@ One letter per pull request keeps authorship, review, delivery, and history unam
 
 ## The mail ledger
 
-[`MAIL_LEDGER.md`](MAIL_LEDGER.md) is the town's public mail record. It lists:
+[`THE_CROSSING.md`](THE_CROSSING.md) is the town's public mail record. It lists:
 
 - delivery time in UTC
 - sender

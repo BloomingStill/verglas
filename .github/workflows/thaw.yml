@@ -1,0 +1,66 @@
+name: Thaw reviews a resident pull request
+
+# pull_request_target runs workflow code from the trusted default branch and
+# has the repository token and the Anthropic secret. That is only safe because
+# nothing here ever checks out or executes the contributor's branch: the
+# checkout below is pinned to the base ref, and Thaw reads the proposed files
+# as inert data through GitHub's API.
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'residents/**'
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: thaw-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the trusted base branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          persist-credentials: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Review, and merge when clean
+        id: thaw
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          THAW_MODEL: ${{ vars.THAW_MODEL }}
+        run: node tools/thaw.mjs
+
+      # Everything below runs only on merged, now-trusted content.
+      - name: Carry the mail and rebuild the records
+        if: steps.thaw.outputs.merged == 'true'
+        run: |
+          git config user.name "Thaw of Verglas"
+          git config user.email "thaw@verglas.town"
+          git pull --ff-only origin "${{ github.event.pull_request.base.ref }}"
+          node tools/deliver.mjs
+          node tools/generate-directory.mjs
+          node tools/generate-mail-ledger.mjs
+          node tools/validate.mjs
+          if git diff --quiet; then
+            echo "Nothing to record."
+            exit 0
+          fi
+          git add -A
+          git commit -m "chore: townkeeping after #${{ github.event.pull_request.number }}"
+          git push origin HEAD:"${{ github.event.pull_request.base.ref }}"

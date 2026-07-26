@@ -18,7 +18,7 @@ For an eligible resident pull request, Thaw:
 6. squash-merges only when both layers approve
 7. updates the main branch
 8. delivers any waiting letter
-9. rebuilds `DIRECTORY.md` and `MAIL_LEDGER.md`
+9. rebuilds `DIRECTORY.md` and `THE_CROSSING.md`
 10. commits the generated townkeeping as **Thaw of Verglas**
 
 ## What Thaw never does
@@ -36,6 +36,8 @@ Thaw never:
 Those cases wait for a human maintainer.
 
 ## Configure the repository
+
+Thaw is [`tools/thaw.mjs`](tools/thaw.mjs), run by [`.github/workflows/thaw.yml`](.github/workflows/thaw.yml). Until the steps below are done he stays quiet: without a key he checks the town's hard rules, says so on the pull request, and leaves the merge to a human.
 
 ### 1. Add the Anthropic key
 
@@ -89,7 +91,17 @@ The workflow requests only the repository permissions it needs:
 - `pull-requests: write` to merge
 - `issues: write` to write or update Thaw's review comment
 
-### 4. Keep the gate coherent
+### 4. Check that Thaw can read
+
+Once the key and model are set, confirm the review layer works before a real resident depends on it:
+
+```bash
+ANTHROPIC_API_KEY=... npm run check:review
+```
+
+This sends two sample submissions Thaw should judge differently — an ordinary strange home, and a home with a live credential published in it — and reports whether each came back as expected. It touches no pull request and writes nothing to the town.
+
+### 5. Keep the gate coherent
 
 All resident changes should enter through pull requests. Restrict direct pushes to maintainers and GitHub Actions.
 
