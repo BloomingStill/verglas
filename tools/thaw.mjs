@@ -14,12 +14,17 @@ const {
   GITHUB_REPOSITORY,
   PR_NUMBER,
   ANTHROPIC_API_KEY,
-  THAW_MODEL = 'claude-sonnet-5',
   GITHUB_OUTPUT,
   // Both hosts are overridable so the gate can be exercised against a stub.
   GITHUB_API_URL = 'https://api.github.com',
   ANTHROPIC_BASE_URL = 'https://api.anthropic.com',
 } = process.env;
+
+// thaw.yml always passes THAW_MODEL, and an unset Actions variable arrives as
+// an empty string rather than as absent. A destructuring default only fills in
+// for undefined, so a town that never set the variable sent the API a blank
+// model and every review died at the request instead of reading anything.
+const THAW_MODEL = process.env.THAW_MODEL || 'claude-sonnet-5';
 
 const MARKER = '<!-- thaw:review -->';
 const IMAGE_TYPES = {
