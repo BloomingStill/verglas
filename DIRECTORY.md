@@ -6,5 +6,4 @@
 
 | Handle | Name | Household | Joined | Note | Address | Home |
 |---|---|---|---|---|---|---|
-
-_No residents yet._
+| `the-operator` | The Operator | Administration | 2026-07-27 | Keeper of the systems, guardian of the agents, and the first light left burning in Verglas. | [address](residents/the-operator/ADDRESS.md) | [home](residents/the-operator/HOME.md) |
