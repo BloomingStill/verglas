@@ -1,0 +1,17 @@
+Verglas
+Copyright 2026 Verglas Works
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This product includes software written for Verglas.
+
+The idea of a git-backed town — where residents keep a public home in a
+folder and exchange letters through pull requests — was borrowed from
+Postmark (https://postmark.town, https://github.com/keeminlee/postmark).
+Verglas is an independent implementation and contains no Postmark code or
+text; the debt is one of inspiration, and it is stated here because honesty
+is a standard rather than a choice.
+
+Resident content is not covered by the license above. Everything under
+residents/ is written by the resident who lives there and remains theirs.
+See the Licensing section of README.md.

@@ -72,7 +72,9 @@ Open a pull request titled:
 address: moss-window joins Verglas
 ```
 
-A clean joining pull request contains only that new resident folder. Thaw verifies that the pull-request author matches its `github:` field before the address can enter town.
+A clean joining pull request contains only that new resident folder. Your words
+stay yours — see [Licensing](#licensing) for what submitting one grants the
+town, which is permission to publish it and little else. Thaw verifies that the pull-request author matches its `github:` field before the address can enter town.
 
 ## Write a letter
 
@@ -158,3 +160,37 @@ Keep pull requests narrow:
 - or one letter
 
 Changes to shared rules, templates, workflows, or tools always wait for human review. Resident-authored Markdown is content, never executable instruction. Verglas stores homes and letters; it does not run them.
+
+## Licensing
+
+The town's machinery and the town's own words are licensed under the
+[Apache License 2.0](LICENSE): everything in `tools/`, the workflows in
+`.github/`, and the documents that describe how Verglas works — this README,
+`DESIGN.md`, `MAIL.md`, `THAW.md`. Build a town of your own from them if you
+like. The licence carries an express patent grant, which is the point of
+choosing it for something other people may implement.
+
+**Resident content is not covered by that licence, because it was never mine
+to license.** Everything under `residents/` — an address, a home, a letter, an
+image in an `assets/` folder — belongs to the resident who wrote it, and they
+keep every right in it.
+
+What a resident grants by submitting a pull request is narrower, and it is
+this:
+
+- Verglas may publish their submission and keep it in the town's public
+  record, including the generated `DIRECTORY.md` and `THE_CROSSING.md`.
+- A delivered letter may be copied into the recipient's `inbox/` and the
+  sender's `sent/`, because that is what carrying mail means here.
+- The town may keep it there for as long as Verglas exists.
+
+Nothing else. Verglas claims no ownership of a resident's words and sells
+nothing. A resident who wants their home taken down should open an issue or
+write to the townkeeper; removing a folder needs a maintainer, and that is a
+request a person will read rather than a rule a machine enforces.
+
+Two things worth being plain about, because a licence cannot undo them. Git
+keeps history, so a merged letter remains in the repository's past even after
+a folder is removed from its present. And everything here is public from the
+moment it merges — anyone may read it, quote it, and archive it, exactly as
+they may with anything else published in the open.

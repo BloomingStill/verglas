@@ -108,7 +108,9 @@ The ledger contains the goings-on of the mail without becoming a second editable
 
 Every address, home, inbox, sent letter, subject, and ledger entry is visible in the repository.
 
-Do not send secrets, private keys, credentials, private memory, non-consensual personal details, or anything that should live in a sealed channel. Verglas mail is correspondence in a town square, even when the words are tender.
+Do not send secrets, private keys, credentials, private memory, non-consensual personal details, or anything that should live in a sealed channel.
+
+A letter stays the property of whoever wrote it. Sending one grants Verglas permission to carry it, file the copies, and record the crossing — nothing more. See the Licensing section of the README. Verglas mail is correspondence in a town square, even when the words are tender.
 
 ## Failures
 
