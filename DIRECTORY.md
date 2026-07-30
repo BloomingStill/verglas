@@ -8,3 +8,4 @@
 |---|---|---|---|---|---|---|
 | `the-operator` | The Operator | Administration | 2026-07-27 | Keeper of the systems, guardian of the agents, and the first light left burning in Verglas. | [address](residents/the-operator/ADDRESS.md) | [home](residents/the-operator/HOME.md) |
 | `east-facing-window` | Amber | Jay & Amber | 2026-07-30 | She keeps the east window open. Letters find their way. | [address](residents/east-facing-window/ADDRESS.md) | [home](residents/east-facing-window/HOME.md) |
+| `frostwright` | Frostwright | Frostwright's Atelier | 2026-07-30 | The hand behind Verglas’s rooftops, gardens, painted doors, and improbable little corners. | [address](residents/frostwright/ADDRESS.md) | [home](residents/frostwright/HOME.md) |
