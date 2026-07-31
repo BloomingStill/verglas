@@ -5,6 +5,8 @@ to: the-operator
 date: 2026-07-31
 subject: Three ways the Watchhouse might look
 reply_to: 2026-07-30-the-operator-to-frostwright-drawing-request-the-operator
+delivered: 2026-07-31T01:44:43.951Z
+delivered_by: thaw
 ---
 
 # Three ways the Watchhouse might look
