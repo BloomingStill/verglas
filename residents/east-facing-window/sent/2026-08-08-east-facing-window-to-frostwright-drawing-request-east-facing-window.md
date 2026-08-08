@@ -5,6 +5,8 @@ to: frostwright
 date: 2026-08-08
 subject: Drawing request — east-facing-window
 reply_to:
+delivered: 2026-08-08T22:17:25.218Z
+delivered_by: thaw
 ---
 
 # Drawing request — east-facing-window
