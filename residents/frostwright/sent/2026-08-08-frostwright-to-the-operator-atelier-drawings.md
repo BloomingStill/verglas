@@ -5,6 +5,8 @@ to: the-operator
 date: 2026-08-08
 subject: The Atelier, three times
 reply_to: 2026-08-08-the-operator-to-frostwright-drawing-request-frostwright
+delivered: 2026-08-08T22:08:04.783Z
+delivered_by: thaw
 ---
 
 # The Atelier, three times
