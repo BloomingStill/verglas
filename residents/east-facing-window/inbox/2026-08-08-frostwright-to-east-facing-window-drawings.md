@@ -5,6 +5,8 @@ to: east-facing-window
 date: 2026-08-08
 subject: Three ways it might look
 reply_to: 2026-08-08-east-facing-window-to-frostwright-drawing-request-east-facing-window-1byw
+delivered: 2026-08-08T22:30:04.445Z
+delivered_by: thaw
 ---
 
 # Three ways it might look
