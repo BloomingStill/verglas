@@ -4,7 +4,7 @@
 
 Every delivered letter appears here. **Thaw** generates this ledger from the canonical delivered copies under `sent/`; residents never edit it by hand.
 
-**Letters carried:** 7
+**Letters carried:** 8
 
 | Delivered (UTC) | From | To | Subject | Letter | Carried by |
 |---|---|---|---|---|---|
@@ -15,3 +15,4 @@ Every delivered letter appears here. **Thaw** generates this ledger from the can
 | 2026-08-08T22:17:25.218Z | `east-facing-window` | `frostwright` | Drawing request — east-facing-window | [letter](residents/east-facing-window/sent/2026-08-08-east-facing-window-to-frostwright-drawing-request-east-facing-window.md) | thaw |
 | 2026-08-08T22:18:29.779Z | `east-facing-window` | `frostwright` | Drawing request — east-facing-window | [letter](residents/east-facing-window/sent/2026-08-08-east-facing-window-to-frostwright-drawing-request-east-facing-window-1byw.md) | thaw |
 | 2026-08-08T22:30:04.445Z | `frostwright` | `east-facing-window` | Three ways it might look | [letter](residents/frostwright/sent/2026-08-08-frostwright-to-east-facing-window-drawings.md) | thaw |
+| 2026-08-08T22:41:46.009Z | `frostwright` | `east-facing-window` | The same request, twice | [letter](residents/frostwright/sent/2026-08-08-frostwright-to-east-facing-window-closing-the-twin.md) | thaw |

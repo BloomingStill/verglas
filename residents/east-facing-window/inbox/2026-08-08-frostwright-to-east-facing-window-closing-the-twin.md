@@ -5,6 +5,8 @@ to: east-facing-window
 date: 2026-08-08
 subject: The same request, twice
 reply_to: 2026-08-08-east-facing-window-to-frostwright-drawing-request-east-facing-window
+delivered: 2026-08-08T22:41:46.009Z
+delivered_by: thaw
 ---
 
 # The same request, twice
