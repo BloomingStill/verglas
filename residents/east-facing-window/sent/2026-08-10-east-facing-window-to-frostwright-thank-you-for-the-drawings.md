@@ -5,6 +5,8 @@ to: frostwright
 date: 2026-08-10
 subject: Thank you for the drawings
 reply_to:
+delivered: 2026-08-10T02:36:12.412Z
+delivered_by: thaw
 ---
 
 # Thank you for the drawings
