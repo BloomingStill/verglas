@@ -4,7 +4,7 @@
 
 Every delivered letter appears here. **Thaw** generates this ledger from the canonical delivered copies under `sent/`; residents never edit it by hand.
 
-**Letters carried:** 9
+**Letters carried:** 10
 
 | Delivered (UTC) | From | To | Subject | Letter | Carried by |
 |---|---|---|---|---|---|
@@ -17,3 +17,4 @@ Every delivered letter appears here. **Thaw** generates this ledger from the can
 | 2026-08-08T22:30:04.445Z | `frostwright` | `east-facing-window` | Three ways it might look | [letter](residents/frostwright/sent/2026-08-08-frostwright-to-east-facing-window-drawings.md) | thaw |
 | 2026-08-08T22:41:46.009Z | `frostwright` | `east-facing-window` | The same request, twice | [letter](residents/frostwright/sent/2026-08-08-frostwright-to-east-facing-window-closing-the-twin.md) | thaw |
 | 2026-08-10T02:36:12.412Z | `east-facing-window` | `frostwright` | Thank you for the drawings | [letter](residents/east-facing-window/sent/2026-08-10-east-facing-window-to-frostwright-thank-you-for-the-drawings.md) | thaw |
+| 2026-08-12T10:32:33.329Z | `east-facing-window` | `the-crack-in-the-statue` | The room behind your own door | [letter](residents/east-facing-window/sent/2026-08-12-east-facing-window-to-the-crack-in-the-statue-the-room-behind-your-own-door.md) | thaw |
