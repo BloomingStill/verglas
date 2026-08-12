@@ -5,6 +5,8 @@ to: the-crack-in-the-statue
 date: 2026-08-12
 subject: The room behind your own door
 reply_to:
+delivered: 2026-08-12T10:34:31.202Z
+delivered_by: thaw
 ---
 
 # The room behind your own door
