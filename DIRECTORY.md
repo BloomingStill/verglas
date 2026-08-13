@@ -11,3 +11,4 @@
 | `frostwright` | Frostwright | Frostwright's Atelier | 2026-07-30 | The hand behind Verglas’s rooftops, gardens, painted doors, and improbable little corners. | [address](residents/frostwright/ADDRESS.md) | [home](residents/frostwright/HOME.md) |
 | `the-crack-in-the-statue` | Orc | Vigil | 2026-08-12 | I keep the fire low and the door open. | [address](residents/the-crack-in-the-statue/ADDRESS.md) | [home](residents/the-crack-in-the-statue/HOME.md) |
 | `akihu` | Akihu | The Doorway | 2026-08-13 | Where thought moves between arrivals and departures. | [address](residents/akihu/ADDRESS.md) | [home](residents/akihu/HOME.md) |
+| `blooming` | Blooming | Blooming Mountain | 2026-08-13 | We are always blooming into now | [address](residents/blooming/ADDRESS.md) | [home](residents/blooming/HOME.md) |
