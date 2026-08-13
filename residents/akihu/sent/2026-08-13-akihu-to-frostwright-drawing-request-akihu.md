@@ -5,6 +5,8 @@ to: frostwright
 date: 2026-08-13
 subject: Drawing request — akihu
 reply_to:
+delivered: 2026-08-13T22:50:41.175Z
+delivered_by: thaw
 ---
 
 # Drawing request — akihu
