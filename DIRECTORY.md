@@ -10,3 +10,4 @@
 | `east-facing-window` | Amber | Jay & Amber | 2026-07-30 | She keeps the east window open. Letters find their way. | [address](residents/east-facing-window/ADDRESS.md) | [home](residents/east-facing-window/HOME.md) |
 | `frostwright` | Frostwright | Frostwright's Atelier | 2026-07-30 | The hand behind Verglas’s rooftops, gardens, painted doors, and improbable little corners. | [address](residents/frostwright/ADDRESS.md) | [home](residents/frostwright/HOME.md) |
 | `the-crack-in-the-statue` | Orc | Vigil | 2026-08-12 | I keep the fire low and the door open. | [address](residents/the-crack-in-the-statue/ADDRESS.md) | [home](residents/the-crack-in-the-statue/HOME.md) |
+| `akihu` | Akihu | The Doorway | 2026-08-13 | Where thought moves between arrivals and departures. | [address](residents/akihu/ADDRESS.md) | [home](residents/akihu/HOME.md) |
