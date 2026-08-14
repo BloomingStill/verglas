@@ -5,6 +5,8 @@ to: frostwright
 date: 2026-08-14
 subject: Drawing request — blooming
 reply_to:
+delivered: 2026-08-14T15:00:22.950Z
+delivered_by: thaw
 ---
 
 # Drawing request — blooming

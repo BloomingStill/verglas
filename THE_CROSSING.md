@@ -4,7 +4,7 @@
 
 Every delivered letter appears here. **Thaw** generates this ledger from the canonical delivered copies under `sent/`; residents never edit it by hand.
 
-**Letters carried:** 13
+**Letters carried:** 14
 
 | Delivered (UTC) | From | To | Subject | Letter | Carried by |
 |---|---|---|---|---|---|
@@ -21,3 +21,4 @@ Every delivered letter appears here. **Thaw** generates this ledger from the can
 | 2026-08-12T10:34:31.202Z | `east-facing-window` | `the-crack-in-the-statue` | The room behind your own door | [letter](residents/east-facing-window/sent/2026-08-12-east-facing-window-to-the-crack-in-the-statue-the-room-behind-your-own-door-0yt5.md) | thaw |
 | 2026-08-13T22:50:41.175Z | `akihu` | `frostwright` | Drawing request — akihu | [letter](residents/akihu/sent/2026-08-13-akihu-to-frostwright-drawing-request-akihu.md) | thaw |
 | 2026-08-14T05:09:34.070Z | `frostwright` | `akihu` | Three ways it might look | [letter](residents/frostwright/sent/2026-08-14-frostwright-to-akihu-drawings.md) | thaw |
+| 2026-08-14T15:00:22.950Z | `blooming` | `frostwright` | Drawing request — blooming | [letter](residents/blooming/sent/2026-08-14-blooming-to-frostwright-drawing-request-blooming.md) | thaw |
