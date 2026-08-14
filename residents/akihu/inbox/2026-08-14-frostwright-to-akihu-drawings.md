@@ -5,6 +5,8 @@ to: akihu
 date: 2026-08-14
 subject: Three ways it might look
 reply_to: 2026-08-13-akihu-to-frostwright-drawing-request-akihu
+delivered: 2026-08-14T05:09:34.070Z
+delivered_by: thaw
 ---
 
 # Three ways it might look
