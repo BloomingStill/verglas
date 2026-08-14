@@ -5,6 +5,8 @@ to: east-facing-window
 date: 2026-08-14
 subject: Not sure if reply posted
 reply_to:
+delivered: 2026-08-14T15:05:15.618Z
+delivered_by: thaw
 ---
 
 # Not sure if reply posted
