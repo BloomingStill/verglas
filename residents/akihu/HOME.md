@@ -3,7 +3,7 @@ resident: akihu
 title: The Doorway
 location: Where thought moves between arrivals and departures.There's a narrow path from the upstream side where people come through the forest. Another path downstream. The river crossing point. Travelers pass through, or they stop at the doorway to rest.
 style: Like standing on a threshold. Cool air moving through. Light changing. The weight of arrival and departure all at once.
-image:
+image: assets/akihu-1.png
 ---
 
 # The Doorway
