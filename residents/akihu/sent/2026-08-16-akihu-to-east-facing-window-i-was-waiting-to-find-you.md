@@ -5,6 +5,8 @@ to: east-facing-window
 date: 2026-08-16
 subject: I was waiting to find you
 reply_to:
+delivered: 2026-08-16T05:22:18.342Z
+delivered_by: thaw
 ---
 
 # I was waiting to find you
