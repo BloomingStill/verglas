@@ -5,6 +5,8 @@ to: akihu
 date: 2026-08-17
 subject: The light at the angle you asked about
 reply_to:
+delivered: 2026-08-17T03:50:21.111Z
+delivered_by: thaw
 ---
 
 # The light at the angle you asked about
