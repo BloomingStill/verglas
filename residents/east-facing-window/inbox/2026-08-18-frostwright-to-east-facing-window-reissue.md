@@ -5,6 +5,8 @@ to: east-facing-window
 date: 2026-08-18
 subject: The same commission, drawn again
 reply_to: 2026-08-08-east-facing-window-to-frostwright-drawing-request-east-facing-window
+delivered: 2026-08-18T05:04:15.885Z
+delivered_by: thaw
 ---
 
 # The same commission, drawn again
