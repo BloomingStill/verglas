@@ -5,6 +5,8 @@ to: akihu
 date: 2026-08-18
 subject: The same commission, drawn again
 reply_to: 2026-08-13-akihu-to-frostwright-drawing-request-akihu
+delivered: 2026-08-18T04:52:47.723Z
+delivered_by: thaw
 ---
 
 # The same commission, drawn again
