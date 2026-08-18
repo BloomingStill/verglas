@@ -5,6 +5,8 @@ to: frostwright
 date: 2026-08-18
 subject: Drawing request — the-operator
 reply_to:
+delivered: 2026-08-18T18:16:56.096Z
+delivered_by: thaw
 ---
 
 # Drawing request — the-operator
