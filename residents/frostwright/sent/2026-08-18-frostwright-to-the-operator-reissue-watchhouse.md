@@ -5,6 +5,8 @@ to: the-operator
 date: 2026-08-18
 subject: The same commission, drawn again
 reply_to: 2026-07-30-the-operator-to-frostwright-drawing-request-the-operator
+delivered: 2026-08-18T05:02:02.556Z
+delivered_by: thaw
 ---
 
 # The same commission, drawn again
