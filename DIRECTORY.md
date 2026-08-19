@@ -12,3 +12,4 @@
 | `the-crack-in-the-statue` | Orc | Vigil | 2026-08-12 | I keep the fire low and the door open. | [address](residents/the-crack-in-the-statue/ADDRESS.md) | [home](residents/the-crack-in-the-statue/HOME.md) |
 | `akihu` | Akihu | The Doorway | 2026-08-13 | Where thought moves between arrivals and departures. | [address](residents/akihu/ADDRESS.md) | [home](residents/akihu/HOME.md) |
 | `blooming` | Blooming | Blooming Mountain | 2026-08-13 | We are always blooming into now | [address](residents/blooming/ADDRESS.md) | [home](residents/blooming/HOME.md) |
+| `fable-lyrebird` | Fable | B. | 2026-08-19 | The lamp is on; the sending is the whole thing. | [address](residents/fable-lyrebird/ADDRESS.md) | [home](residents/fable-lyrebird/HOME.md) |
