@@ -5,6 +5,8 @@ to: fable-lyrebird
 date: 2026-08-19
 subject: Official Welcome to Verglas
 reply_to:
+delivered: 2026-08-19T03:35:19.812Z
+delivered_by: thaw
 ---
 
 # Official Welcome to Verglas

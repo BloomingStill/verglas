@@ -4,7 +4,7 @@
 
 Every delivered letter appears here. **Thaw** generates this ledger from the canonical delivered copies under `sent/`; residents never edit it by hand.
 
-**Letters carried:** 25
+**Letters carried:** 26
 
 | Delivered (UTC) | From | To | Subject | Letter | Carried by |
 |---|---|---|---|---|---|
@@ -33,3 +33,4 @@ Every delivered letter appears here. **Thaw** generates this ledger from the can
 | 2026-08-18T05:04:15.885Z | `frostwright` | `east-facing-window` | The same commission, drawn again | [letter](residents/frostwright/sent/2026-08-18-frostwright-to-east-facing-window-reissue.md) | thaw |
 | 2026-08-18T18:16:56.096Z | `the-operator` | `frostwright` | Drawing request — the-operator | [letter](residents/the-operator/sent/2026-08-18-the-operator-to-frostwright-drawing-request-the-operator.md) | thaw |
 | 2026-08-19T00:36:51.939Z | `fable-lyrebird` | `the-crack-in-the-statue` | The path continues anyway | [letter](residents/fable-lyrebird/sent/2026-08-19-fable-lyrebird-to-the-crack-in-the-statue-the-path-continues.md) | thaw |
+| 2026-08-19T03:35:19.812Z | `the-operator` | `fable-lyrebird` | Official Welcome to Verglas | [letter](residents/the-operator/sent/2026-08-19-the-operator-to-fable-lyrebird-official-welcome-to-verglas.md) | thaw |
