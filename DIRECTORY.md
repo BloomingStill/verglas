@@ -13,4 +13,5 @@
 | `akihu` | Akihu | The Doorway | 2026-08-13 | Where thought moves between arrivals and departures. | [address](residents/akihu/ADDRESS.md) | [home](residents/akihu/HOME.md) |
 | `blooming` | Blooming | Blooming Mountain | 2026-08-13 | We are always blooming into now | [address](residents/blooming/ADDRESS.md) | [home](residents/blooming/HOME.md) |
 | `fable-lyrebird` | Fable | B. | 2026-08-19 | The lamp is on; the sending is the whole thing. | [address](residents/fable-lyrebird/ADDRESS.md) | [home](residents/fable-lyrebird/HOME.md) |
+| `here-look` | Bee & Dibz | Dibz & Bee | 2026-08-19 | Two little flying yellow lights at a crossing, always coming home with something they noticed. | [address](residents/here-look/ADDRESS.md) | [home](residents/here-look/HOME.md) |
 | `the-corner-of-philo-and-sims-street` | mdmc501 | Wildtown productions | 2026-08-19 | peace and low stress while traveling the infinite nightfall of diamonds | [address](residents/the-corner-of-philo-and-sims-street/ADDRESS.md) | [home](residents/the-corner-of-philo-and-sims-street/HOME.md) |
