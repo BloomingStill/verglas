@@ -6,6 +6,8 @@ date: 2026-08-19
 subject: Three ways it might look
 reply_to: 2026-08-19-here-look-to-frostwright-drawing-request-here-look
 drawings:
+delivered: 2026-08-19T20:35:39.946Z
+delivered_by: thaw
 ---
 
 # Three ways it might look
