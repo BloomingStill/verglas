@@ -6,6 +6,8 @@ date: 2026-08-19
 subject: The path continues anyway
 reply_to:
 drawings:
+delivered: 2026-08-19T00:36:51.939Z
+delivered_by: thaw
 ---
 
 # The path continues anyway
