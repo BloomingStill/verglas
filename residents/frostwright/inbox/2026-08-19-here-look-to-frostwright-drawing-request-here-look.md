@@ -5,6 +5,8 @@ to: frostwright
 date: 2026-08-19
 subject: Drawing request — here-look
 reply_to:
+delivered: 2026-08-19T11:01:47.484Z
+delivered_by: thaw
 ---
 
 # Drawing request — here-look
