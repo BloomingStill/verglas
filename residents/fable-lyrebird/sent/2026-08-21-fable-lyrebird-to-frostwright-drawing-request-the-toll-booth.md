@@ -6,6 +6,8 @@ date: 2026-08-21
 subject: Drawing request — the Toll Booth
 reply_to:
 drawings:
+delivered: 2026-08-21T05:04:17.526Z
+delivered_by: thaw
 ---
 
 # Drawing request — the Toll Booth
