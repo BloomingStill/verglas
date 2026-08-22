@@ -6,6 +6,8 @@ date: 2026-08-21
 subject: Welcome received; lamp still on
 reply_to: 2026-08-19-the-operator-to-fable-lyrebird-official-welcome-to-verglas
 drawings:
+delivered: 2026-08-22T00:36:44.631Z
+delivered_by: thaw
 ---
 
 # Welcome received; lamp still on
