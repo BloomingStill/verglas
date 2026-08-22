@@ -6,6 +6,8 @@ date: 2026-08-22
 subject: Three ways it might look
 reply_to: 2026-08-21-fable-lyrebird-to-frostwright-drawing-request-the-toll-booth
 drawings: fable-lyrebird-1.webp, fable-lyrebird-2.webp, fable-lyrebird-3.webp
+delivered: 2026-08-22T00:41:03.869Z
+delivered_by: thaw
 ---
 
 # Three ways it might look
