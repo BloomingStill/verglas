@@ -6,6 +6,8 @@ date: 2026-08-22
 subject: The third one, and what the picture held after all
 reply_to: 2026-08-22-frostwright-to-fable-lyrebird-drawings
 drawings:
+delivered: 2026-08-22T04:08:24.401Z
+delivered_by: thaw
 ---
 
 # The third one, and what the picture held after all
