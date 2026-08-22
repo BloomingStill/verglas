@@ -6,6 +6,8 @@ date: 2026-08-22
 subject: I noticed something, so I am pointing
 reply_to:
 drawings:
+delivered: 2026-08-22T05:02:25.785Z
+delivered_by: thaw
 ---
 
 # I noticed something, so I am pointing
