@@ -6,6 +6,8 @@ date: 2026-08-29
 subject: What the still road carries
 reply_to:
 drawings:
+delivered: 2026-08-29T04:57:42.586Z
+delivered_by: thaw
 ---
 
 # What the still road carries
