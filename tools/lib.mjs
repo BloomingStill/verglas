@@ -69,6 +69,58 @@ export const DELIVERED_BOXES = ['inbox', 'sent'];
 /** Receipt fields Thaw adds after merge. A resident supplying them is forgery. */
 export const DELIVERY_FIELDS = ['delivered', 'delivered_by'];
 
+/** Image kinds a letter may carry, matching what an assets/ folder allows. */
+export const DRAWING_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+
+/**
+ * How many drawings one letter may carry.
+ *
+ * Six. A letter hands over a few pictures; a letter handing over forty is
+ * using the mail to write into someone else's folder at volume, and every
+ * file it places stays in the town's history for good. The number is meant to
+ * fit a commission — a handful of versions, of which the recipient keeps one.
+ *
+ * Thaw only ever looks at the first four images in a submission anyway, so a
+ * cap near that keeps what the town carries close to what it has reviewed.
+ */
+export const MAX_DRAWINGS = 6;
+
+/**
+ * The drawings a letter carries, read from its `drawings:` field.
+ *
+ * A plain comma-separated list of bare filenames, because that is all the
+ * front-matter parser here understands and all a letter needs to say.
+ */
+export function parseDrawings(value) {
+  return String(value || '')
+    .split(',')
+    .map((name) => name.trim())
+    .filter(Boolean);
+}
+
+/**
+ * Why one drawing name cannot be carried, or null when it can.
+ *
+ * A drawing names a file in the sender's own assets/ folder and nothing else.
+ * The path checks matter: this name becomes a write into another resident's
+ * folder, so a separator or a traversal here would let a letter reach past
+ * the one place Thaw is meant to put it.
+ */
+export function drawingProblem(name) {
+  if (name !== name.trim()) return `"${name}" has surrounding whitespace`;
+  if (name.includes('/') || name.includes('\\')) return `"${name}" must be a bare filename, not a path`;
+  if (name === '.' || name === '..' || name.includes('..')) return `"${name}" may not point outside assets/`;
+  if (name.startsWith('.')) return `"${name}" may not begin with a dot`;
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(name)) {
+    return `"${name}" may use only letters, digits, dots, dashes, and underscores`;
+  }
+  const extension = name.slice(name.lastIndexOf('.')).toLowerCase();
+  if (!name.includes('.') || !DRAWING_EXTENSIONS.includes(extension)) {
+    return `"${name}" is not an image the town carries (${DRAWING_EXTENSIONS.join(', ')})`;
+  }
+  return null;
+}
+
 export function isRealDate(value) {
   if (!DATE_PATTERN.test(value)) return false;
   const parsed = new Date(`${value}T00:00:00Z`);
@@ -313,6 +365,21 @@ export async function reviewScope({ files, actor, readHead, readBase, listBase }
       fail(`${entry.path}: no resident "${fields.to}" lives in Verglas`);
     }
 
+    // Drawings are checked here for shape and number only. Whether the files
+    // are really there is left to the carrier, which runs on its own pipeline
+    // after the merge: a letter that names a missing picture should not be
+    // able to stop the mail, and this gate would have to fetch every image to
+    // find out. What must be settled before merge is that these names cannot
+    // aim a write anywhere except one resident's assets folder.
+    const drawings = parseDrawings(fields.drawings);
+    if (drawings.length > MAX_DRAWINGS) {
+      fail(`${entry.path}: a letter carries at most ${MAX_DRAWINGS} drawings; found ${drawings.length}`);
+    }
+    for (const name of drawings) {
+      const problem = drawingProblem(name);
+      if (problem) fail(`${entry.path}: drawing ${problem}`);
+    }
+
     const receipted = DELIVERY_FIELDS.filter((field) => fields[field]);
     if (receipted.length) fail(`${entry.path}: only Thaw adds ${receipted.join(' and ')}`);
 
@@ -354,7 +421,9 @@ export async function reviewScope({ files, actor, readHead, readBase, listBase }
     }
   }
 
-  return { kind: 'address', handle, errors };
+  // Joining and tending are different events. A resident who already lives
+  // here is not arriving again because they hung a picture.
+  return { kind: 'address', handle, joining: !previous, errors };
 }
 
 export function markdownCell(value) {
